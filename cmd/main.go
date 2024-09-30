@@ -8,8 +8,8 @@ import (
 
 // define JSON object type
 type HealthCheckResponse struct {
-	Status  string `json:"status"`
-	Message string `json:"message"`
+	Status string `json:"status"`
+	// Message string `json:"message"`
 }
 
 func main() {
