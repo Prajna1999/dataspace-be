@@ -22,8 +22,12 @@ func (r *OrganizationRepository) Create(organization *models.Organization) error
 }
 
 // get an organization by ID
-func (r *OrganizationRepository) getByID(id uint) (*models.Organization, error) {
+func (r *OrganizationRepository) GetByID(id uint) (*models.Organization, error) {
 	var organization models.Organization
 	err := r.DB.First(&organization, id).Error
+
+	if err != nil {
+		return nil, err
+	}
 	return &organization, err
 }
