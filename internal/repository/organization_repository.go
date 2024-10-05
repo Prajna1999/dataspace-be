@@ -29,5 +29,5 @@ func (r *OrganizationRepository) GetByID(id uint) (*models.Organization, error) 
 	if err != nil {
 		return nil, err
 	}
-	return &organization, err
+	return &organization, nil
 }
