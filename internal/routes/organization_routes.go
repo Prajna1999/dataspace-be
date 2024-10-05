@@ -35,7 +35,7 @@ func (or *OrganizationRoutes) createOrganization(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.IndentedJSON(400, gin.H{"error": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 
 	}
