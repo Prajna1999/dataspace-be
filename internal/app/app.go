@@ -14,10 +14,11 @@ import (
 )
 
 type App struct {
-	router     *gin.Engine
-	db         *gorm.DB
-	orgService *service.OrganizationService
-	routes     *routes.Routes
+	router          *gin.Engine
+	db              *gorm.DB
+	orgService      *service.OrganizationService
+	categoryService *service.CategoryService
+	routes          *routes.Routes
 }
 
 type HealthCheckResponse struct {
@@ -34,19 +35,23 @@ func NewApp() (*App, error) {
 	}
 
 	// Automigrate the org model
-	err = db.AutoMigrate(&models.Organization{})
+	err = db.AutoMigrate(&models.Organization{}, &models.Category{})
 	if err != nil {
 		log.Fatalf("Failed to migrate the Org model %v", err)
 	}
 
 	orgRepo := repository.NewOrganizationRepository(db)
 	orgService := service.NewOragnizationService(orgRepo)
+
+	categoryRepo := repository.NewCategoryRepository(db)
+	categoryService := service.NewCategoryService(categoryRepo)
 	// declare and initialize tha app
 	app := &App{
-		router:     gin.Default(),
-		db:         db,
-		orgService: orgService,
-		routes:     routes.NewRoutes(orgService),
+		router:          gin.Default(),
+		db:              db,
+		orgService:      orgService,
+		categoryService: categoryService,
+		routes:          routes.NewRoutes(orgService, categoryService),
 	}
 	app.setupRoutes()
 	return app, nil

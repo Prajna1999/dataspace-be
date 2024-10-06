@@ -31,3 +31,17 @@ func (r *OrganizationRepository) GetByID(id uint) (*models.Organization, error) 
 	}
 	return &organization, nil
 }
+
+// get all organizations
+func (r *OrganizationRepository) GetAll() ([]*models.Organization, error) {
+	var orgs []*models.Organization
+
+	err := r.DB.Find(&orgs).Error
+
+	if err != nil {
+		return nil, err
+	}
+	// return a pointer to the orgs array
+	return orgs, nil
+
+}

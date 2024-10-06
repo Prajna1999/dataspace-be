@@ -27,3 +27,9 @@ func (s *CategoryService) CreateCategory(name string, description string) error 
 func (s *CategoryService) GetAllCategories() ([]*models.Category, error) {
 	return s.repo.GetAllCategories()
 }
+
+//get one category by id
+
+func (s *CategoryService) GetCategoryByID(id uint) (*models.Category, error) {
+	return s.repo.GetCategoryByID(id)
+}

@@ -27,3 +27,8 @@ func (s *OrganizationService) CreateOrganization(org_name string, admin_email st
 func (s *OrganizationService) GetOrganization(id uint) (*models.Organization, error) {
 	return s.repo.GetByID(id)
 }
+
+// get all organizations
+func (s *OrganizationService) GetAllOrganizations() ([]*models.Organization, error) {
+	return s.repo.GetAll()
+}

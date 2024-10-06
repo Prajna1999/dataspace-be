@@ -2,6 +2,7 @@ package routes
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/Prajna1999/dataspace-be/internal/service"
 	"github.com/gin-gonic/gin"
@@ -20,8 +21,9 @@ func NewCategoryRoutes(categoryService *service.CategoryService) *CategoryRoutes
 func (cat *CategoryRoutes) Setup(router *gin.RouterGroup) {
 	cats := router.Group("/categories")
 	{
-		cats.POST("")
-		cats.GET("")
+		cats.POST("", cat.createCategory)
+		cats.GET("", cat.getCategories)
+		cats.GET("/:id", cat.getCategoryById)
 	}
 }
 
@@ -53,4 +55,26 @@ func (cat *CategoryRoutes) getCategories(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusFound, cats)
+}
+
+func (cat *CategoryRoutes) getCategoryById(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "Invalid User Id"})
+		return
+	}
+
+	// make the database call
+	category, err := cat.categoryService.GetCategoryByID(uint(id))
+
+	// handle errors
+
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.IndentedJSON(http.StatusFound, category)
+
 }

@@ -27,3 +27,14 @@ func (r *CategoryRepository) GetAllCategories() ([]*models.Category, error) {
 	}
 	return categories, nil
 }
+
+// get one category by category id
+func (r *CategoryRepository) GetCategoryByID(id uint) (*models.Category, error) {
+	var category models.Category
+	err := r.DB.First(&category).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return &category, nil
+}

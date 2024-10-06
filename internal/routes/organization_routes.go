@@ -24,6 +24,7 @@ func (or *OrganizationRoutes) Setup(router *gin.RouterGroup) {
 	{
 		orgs.POST("", or.createOrganization)
 		orgs.GET("/:id", or.getOrganization)
+		orgs.GET("", or.getAllOrganizations)
 	}
 }
 
@@ -65,4 +66,17 @@ func (or *OrganizationRoutes) getOrganization(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusFound, org)
 
+}
+
+// get all organizations
+func (or *OrganizationRoutes) getAllOrganizations(c *gin.Context) {
+	orgs, err := or.orgService.GetAllOrganizations()
+
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// jsonify the resulting arrays
+	c.IndentedJSON(http.StatusFound, orgs)
 }
