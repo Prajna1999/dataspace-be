@@ -2,9 +2,9 @@ package models
 
 import "gorm.io/gorm"
 
-type Category struct {
+type Api struct {
 	gorm.Model
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	Apis        []Api
+	CategoryID  uint
 }
