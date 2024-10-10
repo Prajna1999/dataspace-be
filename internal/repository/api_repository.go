@@ -32,3 +32,14 @@ func (r *ApiRepository) GetAll(filters map[string]interface{}) ([]*models.Api, e
 	}
 	return apis, nil
 }
+
+func (r *ApiRepository) GetByID(id uint) (*models.Api, error) {
+	var api models.Api
+	err := r.DB.First(&api, id).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return &api, nil
+
+}

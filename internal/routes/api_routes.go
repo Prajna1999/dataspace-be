@@ -24,8 +24,11 @@ func (api *ApiRoutes) Setup(router *gin.RouterGroup) {
 	{
 		apis.GET("", api.getAllApis)
 		apis.POST("", api.createApi)
+		apis.POST("/:id/endpoints", api.addEndpointToApi)
 	}
 }
+
+// create api with details
 
 func (api *ApiRoutes) createApi(c *gin.Context) {
 	var input *models.Api
@@ -73,4 +76,29 @@ func (api *ApiRoutes) getAllApis(c *gin.Context) {
 		return
 	}
 	c.IndentedJSON(http.StatusOK, apis)
+}
+
+// add endpoints to existing api
+func (api *ApiRoutes) addEndpointToApi(c *gin.Context) {
+	// parse apiId fields
+	apiID, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// endpoint fields
+	var endpoint models.EndPoint
+	if err := c.ShouldBindBodyWithJSON(&endpoint); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// make the call to the endpoint service
+	if err := api.apiService.AddEndpointToApi(uint(apiID), &endpoint); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.IndentedJSON(http.StatusCreated, gin.H{"message": "Successfully created endpoints"})
+
 }

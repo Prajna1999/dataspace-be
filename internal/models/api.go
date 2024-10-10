@@ -11,4 +11,5 @@ type Api struct {
 	CategoryID     uint   `json:"category_id"`
 	OrganizationID uint   `json:"organization_id"`
 	IsPublic       bool   `json:"is_public" default:"false"`
+	EndPoints      []EndPoint
 }
