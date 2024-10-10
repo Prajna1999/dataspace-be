@@ -18,6 +18,7 @@ type App struct {
 	db              *gorm.DB
 	orgService      *service.OrganizationService
 	categoryService *service.CategoryService
+	apiService      *service.ApiService
 	routes          *routes.Routes
 }
 
@@ -35,7 +36,7 @@ func NewApp() (*App, error) {
 	}
 
 	// Automigrate the org model
-	err = db.AutoMigrate(&models.Organization{}, &models.Category{})
+	err = db.AutoMigrate(&models.Organization{}, &models.Category{}, &models.Api{})
 	if err != nil {
 		log.Fatalf("Failed to migrate the Org model %v", err)
 	}
@@ -45,13 +46,18 @@ func NewApp() (*App, error) {
 
 	categoryRepo := repository.NewCategoryRepository(db)
 	categoryService := service.NewCategoryService(categoryRepo)
+
+	apiRepo := repository.NewApiRepository(db)
+	apiService := service.NewApiService(apiRepo)
+
 	// declare and initialize tha app
 	app := &App{
 		router:          gin.Default(),
 		db:              db,
 		orgService:      orgService,
 		categoryService: categoryService,
-		routes:          routes.NewRoutes(orgService, categoryService),
+		apiService:      apiService,
+		routes:          routes.NewRoutes(orgService, categoryService, apiService),
 	}
 	app.setupRoutes()
 	return app, nil

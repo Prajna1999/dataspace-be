@@ -7,4 +7,5 @@ type Organization struct {
 	OrgName       string `json:"org_name"`
 	AdminEmail    string `json:"admin_email"`
 	AdminUserName string `json:"admin_user_name"`
+	Apis          []Api
 }
