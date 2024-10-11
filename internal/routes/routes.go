@@ -10,6 +10,7 @@ type Routes struct {
 	categoryRoutes *CategoryRoutes
 	apiRoutes      *ApiRoutes
 	endpointRoutes *EndPointRoutes
+
 	//add other route groups here
 }
 

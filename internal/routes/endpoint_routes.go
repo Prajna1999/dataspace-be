@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Prajna1999/dataspace-be/internal/models"
 	"github.com/Prajna1999/dataspace-be/internal/service"
 	"github.com/gin-gonic/gin"
 )
@@ -20,6 +21,8 @@ func (endpoint *EndPointRoutes) Setup(router *gin.RouterGroup) {
 	endpoints := router.Group("/endpoints")
 	{
 		endpoints.GET("/:id", endpoint.getEndpointByID)
+		endpoints.GET("/:id/parameters", endpoint.getAllParametersByEndpointID)
+		endpoints.POST("/:id/parameters", endpoint.addParamToApi)
 	}
 }
 
@@ -43,4 +46,44 @@ func (h *EndPointRoutes) getEndpointByID(c *gin.Context) {
 	}
 	c.IndentedJSON(http.StatusOK, endpoint)
 
+}
+
+func (h *EndPointRoutes) addParamToApi(c *gin.Context) {
+	// parse endpoint id fields
+	endpointID, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// parameter fields
+	var parameter *models.Parameter
+	if err := c.ShouldBindBodyWithJSON(&parameter); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// make the acall to add endppoint
+	if err := h.endpointService.AddParameterToEndpoint(uint(endpointID), parameter); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.IndentedJSON(http.StatusCreated, gin.H{"message": "Successfully added parameters to the endpoint"})
+}
+
+func (h *EndPointRoutes) getAllParametersByEndpointID(c *gin.Context) {
+	// parse the endpointif
+	endpointID, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	parameters, err := h.endpointService.GetAllParametersForEndpoint(uint(endpointID))
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if len(parameters) == 0 {
+		c.IndentedJSON(http.StatusOK, gin.H{"message": "Parameters are yet to be created for this endpoint"})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, parameters)
 }

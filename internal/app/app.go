@@ -20,7 +20,8 @@ type App struct {
 	categoryService *service.CategoryService
 	apiService      *service.ApiService
 	endpointService *service.EndpointService
-	routes          *routes.Routes
+	// parameterService *service.ParameterService
+	routes *routes.Routes
 }
 
 type HealthCheckResponse struct {
@@ -37,7 +38,7 @@ func NewApp() (*App, error) {
 	}
 
 	// Automigrate the org model
-	err = db.AutoMigrate(&models.Organization{}, &models.Category{}, &models.Api{}, &models.EndPoint{})
+	err = db.AutoMigrate(&models.Organization{}, &models.Category{}, &models.Api{}, &models.EndPoint{}, &models.Parameter{})
 	if err != nil {
 		log.Fatalf("Failed to migrate the Org model %v", err)
 	}
@@ -52,7 +53,8 @@ func NewApp() (*App, error) {
 
 	endpointRepo := repository.NewEndpointRepository(db)
 	apiService := service.NewApiService(apiRepo, endpointRepo)
-	endpointService := service.NewEndpointService(endpointRepo)
+	paramRepo := repository.NewParameterRepository(db)
+	endpointService := service.NewEndpointService(endpointRepo, paramRepo)
 
 	// declare and initialize tha app
 	app := &App{
