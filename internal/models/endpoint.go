@@ -21,4 +21,5 @@ type EndPoint struct {
 	Method      Method `json:"method"`
 	Summary     string `json:"summary"`
 	Description string `json:"description"`
+	Parameters  []Parameter
 }

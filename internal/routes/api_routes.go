@@ -88,14 +88,14 @@ func (api *ApiRoutes) addEndpointToApi(c *gin.Context) {
 	}
 
 	// endpoint fields
-	var endpoint models.EndPoint
+	var endpoint *models.EndPoint
 	if err := c.ShouldBindBodyWithJSON(&endpoint); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	// make the call to the endpoint service
-	if err := api.apiService.AddEndpointToApi(uint(apiID), &endpoint); err != nil {
+	if err := api.apiService.AddEndpointToApi(uint(apiID), endpoint); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
